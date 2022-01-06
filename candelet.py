@@ -7,7 +7,7 @@ import serial
 filepath= 'dhtdata.csv'
 exist=os.path.isfile(filepath)
 header = ['Timestamp', 'Temperature', 'Humidity']
-
+csvfile = open(filepath, 'a',newline='')
 serial_port = serial.Serial(
     port="/dev/ttyTHS1",
     baudrate=115200,
@@ -25,22 +25,21 @@ try:
             data = serial_port.readline()
             print(data)
             
-            with open(filepath, 'a',newline='') as csvfile:
-                writer = csv.DictWriter(csvfile,delimiter=",",lineterminator='\n', fieldnames = header)
-                #if file not exist write header
-                if not exist:
-                    writer.writeheader()
+            writer = csv.DictWriter(csvfile,delimiter=",",lineterminator='\n', fieldnames = header)
+            #if file not exist write header
+            if not exist:
+                writer.writeheader()
                 
-                # split the data
-                testsplit=test.split(";")
-                temp = testsplit[0]
-                hum = testsplit[1]
-                now = datetime.now()
-                #change timeformat
-                t = now.strftime('%Y-%m-%d %H:%M:%S')
-                
-                #write the data
-                writer.writerows([{'Timestamp':t, 'Temperature':temp, 'Humidity':hum}])
+            # split the data
+            testsplit=test.split(";")
+            temp = testsplit[0]
+            hum = testsplit[1]
+            now = datetime.now()
+            #change timeformat
+            t = now.strftime('%Y-%m-%d %H:%M:%S')
+            
+            #write the data
+            writer.writerows([{'Timestamp':t, 'Temperature':temp, 'Humidity':hum}])
 except KeyboardInterrupt:
     print("Exiting Program")
     
@@ -52,5 +51,3 @@ finally:
     serial_port.close()
     csvfile.close()
     pass
-        
-
